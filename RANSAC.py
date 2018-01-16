@@ -32,7 +32,7 @@ def compute(pts):
     sigma = np.mat([[sigma[0], 0, 0], [0, sigma[1], 0], [0, 0, 0]])
     essentialMat = U * sigma * VT
     # 恢复R、t值
-    parameters = cv2.recoverPose(essentialMat, src_pts, dst_pts)
+    parameters = cv2.recoverPose(essentialMat, src_pts, dst_pts, K)
     R = parameters[1]
     t = parameters[2]
 

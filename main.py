@@ -6,6 +6,7 @@ import RANSAC
 import time
 import sfm
 import save
+import os
 import RTMatrix
 
 timeStart = time.time()
@@ -26,11 +27,13 @@ pts, essentialMat, R, t, src_pts, dst_pts, K = RANSAC.compute(pts)
 points4D = sfm.triangulate_compute(R, t, src_pts, dst_pts, K)
 # 水平拼接
 image = np.hstack((image1, image2))
+# 存储点云信息
+save.save_data(image1, src_pts, R, t, points4D)
 # 显示匹配线段
 sift.show_line(image, pts)
 timeEnd = time.time()
 cv2.waitKey()
 time = timeEnd - timeStart
 print("耗时:" + str(time) + "s")
-
-save.save_data(image, src_pts, R, t, points4D)
+# 显示点云
+os.system('show')
