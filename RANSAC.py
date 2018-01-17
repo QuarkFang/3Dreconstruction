@@ -3,28 +3,28 @@ import cv2
 import math
 
 # 相机内参
-K = np.mat([[818.793, 0, 501.999],
-            [0, 817.801, 374.818],
+K = np.mat([[828.956, 0, 514.510],
+            [0, 828.963, 356.843],
             [0, 0, 1]])
 '''
-[ 818.793  0  501.999;  0  817.801  374.818;  0  0  1 ]
+[ 828.956  0  514.510;  0  828.963  356.843;  0  0  1 ]
 '''
 
 
 def compute(pts):
     src_pts = np.array(pts)[:, 0:2]
     dst_pts = np.array(pts)[:, 2:4]
+    # 计算基础矩阵
+    fundamentalMat, fundamentalMask = cv2.findFundamentalMat(src_pts, dst_pts, cv2.RANSAC, 6.0)
+    # fundamentalMat, fundamentalMask = cv2.findFundamentalMat(src_pts, dst_pts, cv2.FM_8POINT, 6.0)
     # 计算单应性矩阵
-    homographyMat, homographyMask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 6.0)
-    matchesMask = homographyMask.ravel().tolist()
+    # homographyMat, homographyMask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 6.0)
+    matchesMask = fundamentalMask.ravel().tolist()
     # map返回一个对象
     pts_obj = map(delete_RANSAC, pts, matchesMask)
     pts = list(filter(None, pts_obj))
     src_pts = np.array(pts)[:, 0:2]
     dst_pts = np.array(pts)[:, 2:4]
-    # 计算基础矩阵
-    # fundamentalMat, fundamentalMask = cv2.findFundamentalMat(src_pts, dst_pts, cv2.RANSAC, 6.0)
-    # fundamentalMat, fundamentalMask = cv2.findFundamentalMat(src_pts, dst_pts, cv2.FM_8POINT, 6.0)
     # 计算本征矩阵
     essentialMat, essentialMask = cv2.findEssentialMat(src_pts, dst_pts, K)
     # 奇异值分解使本征矩阵秩为2
